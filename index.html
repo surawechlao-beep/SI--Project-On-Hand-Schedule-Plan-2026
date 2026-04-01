@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SI Schedule Plan 2026 | Exion</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red: #B7081D;
+  --red-soft: #f9e5e8;
+  --red-mid: #e8c0c5;
+  --dark: #1a1516;
+  --text: #2c2829;
+  --text2: #6b6468;
+  --text3: #a09a9b;
+  --bg: #f7f5f5;
+  --bg2: #edeaea;
+  --white: #ffffff;
+  --border: #e2dede;
+  --border2: #ccc8c8;
+  --plan-bg: #e8f5e9;
+  --plan-text: #1b7a35;
+  --plan-border: #81c784;
+  --actual-bg: #e3f2fd;
+  --actual-text: #1565c0;
+  --actual-border: #64b5f6;
+  --weekend-bg: #fef9ec;
+  --weekend-text: #b45309;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06);
+  --shadow-lg: 0 20px 40px rgba(0,0,0,0.12);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Kanit', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-weight: 400;
+}
+
+/* ===== HEADER ===== */
+.header {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  padding: 0 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 56px;
+}
+
+.logo {
+  background: var(--red);
+  color: white;
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; letter-spacing: 1px;
+  flex-shrink: 0;
+}
+
+.header-text { flex: 1; }
+.header-title { font-size: 15px; font-weight: 600; color: var(--text); }
+.header-sub { font-size: 11px; font-weight: 300; color: var(--text3); }
+
+.header-btn {
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--white);
+  color: var(--text2);
+  font-family: 'Kanit', sans-serif;
+  font-size: 12px; font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex; align-items: center; gap: 5px;
+}
+.header-btn:hover { border-color: var(--red); color: var(--red); }
+.header-btn.primary { background: var(--red); color: white; border-color: var(--red); }
+.header-btn.primary:hover { background: #9b0618; }
+
+/* ===== MONTH TABS ===== */
+.month-nav-wrap {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 56px;
+  z-index: 90;
+}
+
+.month-nav {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0 16px;
+}
+.month-nav::-webkit-scrollbar { display: none; }
+
+.month-tab {
+  padding: 13px 14px;
+  font-family: 'Kanit', sans-serif;
+  font-size: 12px; font-weight: 500;
+  color: var(--text3);
+  border: none; background: transparent;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.month-tab:hover { color: var(--text2); }
+.month-tab.active { color: var(--red); border-bottom-color: var(--red); font-weight: 600; }
+
+/* ===== MAIN ===== */
+.main { padding: 16px; max-width: 100%; }
+
+/* ===== MONTH INFO BAR ===== */
+.month-bar {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow);
+}
+
+.month-bar-left { display: flex; align-items: center; gap: 14px; }
+
+.month-badge-big {
+  background: var(--red);
+  color: white;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px; font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.month-bar-title { font-size: 16px; font-weight: 600; }
+.month-bar-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+.stats-chips { display: flex; gap: 8px; }
+.stat-chip {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 11px; font-weight: 500;
+  color: var(--text2);
+  display: flex; align-items: center; gap: 5px;
+}
+.chip-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+/* ===== LEGEND ===== */
+.legend {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  font-size: 11px; color: var(--text2);
+  align-items: center;
+}
+.legend-item { display: flex; align-items: center; gap: 5px; }
+.leg-box { width: 12px; height: 12px; border-radius: 3px; }
+.legend-sep { color: var(--border2); }
+
+/* ===== PERSON CARD ===== */
+.person-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+.person-card:hover { box-shadow: var(--shadow-md); }
+
+.person-head {
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.person-num {
+  width: 28px; height: 28px;
+  background: var(--red);
+  color: white;
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700;
+  flex-shrink: 0;
+}
+
+.person-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.person-pos { font-size: 11px; font-weight: 300; color: var(--text3); margin-top: 1px; }
+.person-tel { font-size: 11px; color: var(--text3); margin-left: auto; }
+
+/* ===== CALENDAR ===== */
+.cal-wrap { padding: 12px 16px; overflow-x: auto; }
+
+.cal-table {
+  min-width: max-content;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.cal-th-label {
+  width: 56px;
+  font-size: 10px; font-weight: 600;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  text-align: right;
+  padding-right: 8px;
+  vertical-align: middle;
+}
+
+.day-head-num {
+  width: 34px;
+  text-align: center;
+  font-size: 10px; font-weight: 600;
+  color: var(--text2);
+  padding-bottom: 2px;
+}
+.day-head-num.weekend { color: var(--weekend-text); }
+
+.day-head-name {
+  text-align: center;
+  font-size: 8px; font-weight: 400;
+  color: var(--text3);
+  padding-bottom: 4px;
+}
+.day-head-name.weekend { color: var(--weekend-text); }
+
+.day-cell {
+  width: 34px; height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--white);
+  cursor: pointer;
+  transition: all 0.1s;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 8px; font-weight: 600;
+  color: var(--text3);
+  position: relative;
+  white-space: nowrap;
+  overflow: hidden;
+  user-select: none;
+}
+.day-cell:hover { border-color: var(--red); background: var(--red-soft); color: var(--red); z-index: 1; }
+.day-cell.weekend { background: var(--weekend-bg); }
+.day-cell.has-plan { background: var(--plan-bg); border-color: var(--plan-border); color: var(--plan-text); }
+.day-cell.has-actual { background: var(--actual-bg); border-color: var(--actual-border); color: var(--actual-text); }
+.day-cell.in-range { background: var(--red-soft); border-color: var(--red-mid); color: var(--red); }
+.day-cell.range-start { border-top-left-radius: 5px; border-bottom-left-radius: 5px; background: var(--red); border-color: var(--red); color: white; }
+.day-cell.range-end { border-top-right-radius: 5px; border-bottom-right-radius: 5px; background: var(--red); border-color: var(--red); color: white; }
+.day-cell.today { box-shadow: 0 0 0 2px var(--red); }
+
+.cell-text { font-size: 7px; font-weight: 600; line-height: 1; display: block; }
+
+/* row spacer */
+.row-spacer { height: 4px; }
+
+/* ===== RANGE HINT ===== */
+.range-hint {
+  background: var(--red-soft);
+  border: 1px solid var(--red-mid);
+  border-radius: 8px;
+  padding: 8px 14px;
+  margin-bottom: 14px;
+  font-size: 12px; color: var(--red);
+  display: none;
+  align-items: center; gap: 8px;
+}
+.range-hint.show { display: flex; }
+.hint-cancel {
+  margin-left: auto;
+  font-size: 11px;
+  cursor: pointer;
+  color: var(--red);
+  text-decoration: underline;
+}
+
+/* ===== ADD PERSON BTN ===== */
+.add-btn {
+  width: 100%;
+  padding: 13px;
+  background: var(--white);
+  border: 2px dashed var(--border2);
+  border-radius: 12px;
+  color: var(--text3);
+  font-family: 'Kanit', sans-serif;
+  font-size: 13px; font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin-bottom: 20px;
+}
+.add-btn:hover { border-color: var(--red); color: var(--red); background: var(--red-soft); }
+
+/* ===== MODAL ===== */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(3px);
+  z-index: 200;
+  display: flex; align-items: flex-end; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s;
+}
+.overlay.open { opacity: 1; pointer-events: all; }
+
+.sheet {
+  background: var(--white);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding: 20px 20px 32px;
+  width: 100%; max-width: 520px;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.32,0.72,0,1);
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.15);
+}
+.overlay.open .sheet { transform: translateY(0); }
+
+.sheet-handle {
+  width: 36px; height: 4px;
+  background: var(--border2);
+  border-radius: 2px;
+  margin: 0 auto 18px;
+}
+
+.sheet-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.sheet-sub { font-size: 12px; color: var(--text3); margin-bottom: 20px; }
+
+.field-label {
+  font-size: 10px; font-weight: 600;
+  color: var(--text3);
+  text-transform: uppercase; letter-spacing: 1px;
+  margin-bottom: 7px;
+}
+
+.field-group { margin-bottom: 16px; }
+
+/* Toggle */
+.type-toggle {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg);
+}
+.type-btn {
+  flex: 1; padding: 9px;
+  background: transparent; border: none;
+  font-family: 'Kanit', sans-serif;
+  font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s;
+  color: var(--text3);
+}
+.type-btn.plan-active { background: var(--plan-bg); color: var(--plan-text); }
+.type-btn.actual-active { background: var(--actual-bg); color: var(--actual-text); }
+
+/* Presets */
+.preset-grid {
+  display: flex; flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.preset-pill {
+  padding: 6px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-family: 'Kanit', sans-serif;
+  font-size: 12px; font-weight: 500;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.preset-pill:hover { border-color: var(--red); color: var(--red); background: var(--red-soft); }
+.preset-pill.selected { background: var(--red); color: white; border-color: var(--red); }
+
+.input-field {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-family: 'Kanit', sans-serif;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--white);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.input-field:focus { border-color: var(--red); box-shadow: 0 0 0 3px var(--red-soft); }
+
+.sheet-actions {
+  display: flex; gap: 8px; margin-top: 20px;
+}
+.act-btn {
+  flex: 1; padding: 11px;
+  border-radius: 9px; border: none;
+  font-family: 'Kanit', sans-serif;
+  font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s;
+}
+.act-cancel { background: var(--bg); border: 1px solid var(--border); color: var(--text2); }
+.act-cancel:hover { background: var(--bg2); }
+.act-clear { background: var(--bg); border: 1px solid #fca5a5; color: #dc2626; flex: 0 0 auto; padding: 11px 14px; }
+.act-clear:hover { background: #fef2f2; }
+.act-save { background: var(--red); color: white; }
+.act-save:hover { background: #9b0618; }
+
+/* Range modal extra */
+.range-date-display {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px; color: var(--text2);
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.rdd-arrow { color: var(--text3); }
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed;
+  bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--text);
+  color: white;
+  padding: 9px 20px;
+  border-radius: 20px;
+  font-size: 12px; font-weight: 500;
+  z-index: 400;
+  opacity: 0;
+  transition: all 0.25s;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Pos grid */
+.pos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">EX</div>
+  <div class="header-text">
+    <div class="header-title">SI Schedule Plan 2026</div>
+    <div class="header-sub">System Integration · Exion Thailand</div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <button class="header-btn" onclick="openAddPersonModal()">+ พนักงาน</button>
+    <button class="header-btn primary" onclick="exportTxt()">📋 Export</button>
+  </div>
+</div>
+
+<div class="month-nav-wrap">
+  <div class="month-nav" id="monthNav"></div>
+</div>
+
+<div class="main">
+  <div class="range-hint" id="rangeHint">
+    <span id="rangeHintText">🖱 คลิกวันสุดท้ายที่ต้องการ</span>
+    <span class="hint-cancel" onclick="cancelRange()">ยกเลิก</span>
+  </div>
+  <div id="mainContent"></div>
+</div>
+
+<!-- CELL / RANGE MODAL -->
+<div class="overlay" id="cellOverlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="cModalTitle">กรอกข้อมูล</div>
+    <div class="sheet-sub" id="cModalSub"></div>
+
+    <div class="field-group">
+      <div class="field-label">ประเภท</div>
+      <div class="type-toggle">
+        <button class="type-btn plan-active" id="tPlan" onclick="setType('plan')">📋 Plan</button>
+        <button class="type-btn" id="tActual" onclick="setType('actual')">✅ Actual</button>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <div class="field-label">กิจกรรม</div>
+      <div class="preset-grid" id="presetGrid"></div>
+      <input class="input-field" type="text" id="actInput" placeholder="พิมพ์กิจกรรมเอง..." oninput="clearPresets()">
+    </div>
+
+    <div class="sheet-actions">
+      <button class="act-btn act-clear" onclick="clearCells()">🗑 ลบ</button>
+      <button class="act-btn act-cancel" onclick="closeCellModal()">ยกเลิก</button>
+      <button class="act-btn act-save" onclick="saveCells()">บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD PERSON MODAL -->
+<div class="overlay" id="personOverlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">เพิ่มพนักงาน</div>
+    <div class="sheet-sub" id="personSub"></div>
+    <div class="field-group">
+      <div class="field-label">ชื่อ-นามสกุล</div>
+      <input class="input-field" type="text" id="pName" placeholder="ชื่อ นามสกุล">
+    </div>
+    <div class="field-group">
+      <div class="field-label">ตำแหน่ง</div>
+      <div class="pos-grid" style="margin-bottom:6px">
+        <button class="preset-pill" onclick="pickPos(this,'Supervisor')">Supervisor</button>
+        <button class="preset-pill" onclick="pickPos(this,'Engineer')">Engineer</button>
+        <button class="preset-pill" onclick="pickPos(this,'Technical')">Technical</button>
+        <button class="preset-pill" onclick="pickPos(this,'Sr. Specialist')">Sr. Specialist</button>
+      </div>
+      <input class="input-field" type="text" id="pPos" placeholder="ตำแหน่ง...">
+    </div>
+    <div class="field-group">
+      <div class="field-label">เบอร์โทร</div>
+      <input class="input-field" type="tel" id="pTel" placeholder="0XX-XXX-XXXX">
+    </div>
+    <div class="sheet-actions">
+      <button class="act-btn act-cancel" onclick="closePersonModal()">ยกเลิก</button>
+      <button class="act-btn act-save" onclick="savePerson()">เพิ่มพนักงาน</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// DATA & CONFIG
+// ============================================================
+const MONTHS = [
+  { name:'มกราคม',   short:'ม.ค.',  eng:'Jan', year:2026, month:0, days:31 },
+  { name:'กุมภาพันธ์', short:'ก.พ.',  eng:'Feb', year:2026, month:1, days:28 },
+  { name:'มีนาคม',   short:'มี.ค.', eng:'Mar', year:2026, month:2, days:31 },
+  { name:'เมษายน',   short:'เม.ย.', eng:'Apr', year:2026, month:3, days:30 },
+  { name:'พฤษภาคม',  short:'พ.ค.',  eng:'May', year:2026, month:4, days:31 },
+  { name:'มิถุนายน',  short:'มิ.ย.', eng:'Jun', year:2026, month:5, days:30 },
+  { name:'กรกฎาคม',  short:'ก.ค.',  eng:'Jul', year:2026, month:6, days:31 },
+  { name:'สิงหาคม',  short:'ส.ค.',  eng:'Aug', year:2026, month:7, days:31 },
+  { name:'กันยายน',  short:'ก.ย.',  eng:'Sep', year:2026, month:8, days:30 },
+  { name:'ตุลาคม',   short:'ต.ค.',  eng:'Oct', year:2026, month:9, days:31 },
+  { name:'พฤศจิกายน', short:'พ.ย.',  eng:'Nov', year:2026, month:10, days:30 },
+  { name:'ธันวาคม',  short:'ธ.ค.',  eng:'Dec', year:2026, month:11, days:31 },
+];
+
+// Compute day-of-week for day 1 of each month in 2026
+MONTHS.forEach(m => {
+  m.startDow = new Date(2026, m.month, 1).getDay(); // 0=Sun
+});
+
+const DAY_SHORT = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+const PRESETS = ['FAT','ART','G2N','Mob','Demob','TTM','EGAT-BPK','PTTOC-R5','Standby','Leave','Office','Travel'];
+
+const BASE_PEOPLE = [
+  { name:'Pocin Oboon',       pos:'Supervisor',          tel:'084-468-8373' },
+  { name:'Virit Adam',         pos:'Engineer',            tel:'082-217-4694' },
+  { name:'Surin Phatum',       pos:'Technical',           tel:'062-238-2994' },
+  { name:'Ukrit Buaprom',      pos:'Technical',           tel:'082-296-5698' },
+  { name:'Ratchapu Teppawong', pos:'Engineer',            tel:'063-598-5461' },
+  { name:'Tada Pateetin',      pos:'Engineer',            tel:'095-272-0023' },
+  { name:'Weerapap Nuambrut',  pos:'Technical',           tel:'081-874-6252' },
+  { name:'Yuthasak S.',        pos:'Senior Product Specialist', tel:'082-999-8881' },
+];
+
+// State
+let currentMonth = new Date().getMonth(); // default to current month index
+if (currentMonth > 11) currentMonth = 0;
+let scheduleData = {}; // "mi-pi-day-type" -> activity string
+let monthPeople  = {}; // mi -> [...person]
+
+// Range selection state
+let rangeState = null;
+// { mi, pi, startDay, type }  — waiting for end click
+
+// ============================================================
+// INIT
+// ============================================================
+function init() {
+  MONTHS.forEach((_, mi) => {
+    monthPeople[mi] = BASE_PEOPLE.map(p => ({...p}));
+  });
+  loadData();
+  renderNav();
+  renderMonth();
+}
+
+// ============================================================
+// STORAGE
+// ============================================================
+function loadData() {
+  try {
+    const s = localStorage.getItem('si_sched_2026_v2');
+    if (!s) return;
+    const d = JSON.parse(s);
+    scheduleData = d.scheduleData || {};
+    if (d.monthPeople) {
+      Object.keys(d.monthPeople).forEach(k => {
+        monthPeople[k] = d.monthPeople[k];
+      });
+    }
+  } catch(e) {}
+}
+
+function saveData() {
+  try {
+    localStorage.setItem('si_sched_2026_v2', JSON.stringify({ scheduleData, monthPeople }));
+  } catch(e) {}
+}
+
+function cellKey(mi, pi, day, type) { return `${mi}-${pi}-${day}-${type}`; }
+
+// ============================================================
+// NAV
+// ============================================================
+function renderNav() {
+  document.getElementById('monthNav').innerHTML = MONTHS.map((m, i) =>
+    `<button class="month-tab ${i===currentMonth?'active':''}" onclick="switchMonth(${i})">${m.short}</button>`
+  ).join('');
+}
+
+function switchMonth(i) {
+  currentMonth = i;
+  rangeState = null;
+  document.getElementById('rangeHint').classList.remove('show');
+  renderNav();
+  renderMonth();
+}
+
+// ============================================================
+// RENDER MONTH
+// ============================================================
+function getDow(mi, day) {
+  return (MONTHS[mi].startDow + day - 1) % 7; // 0=Sun
+}
+function isWeekend(mi, day) {
+  const d = getDow(mi, day);
+  return d === 0 || d === 6;
+}
+
+function countStats(mi) {
+  const ppl = monthPeople[mi] || [];
+  let plan = 0, actual = 0;
+  ppl.forEach((_, pi) => {
+    for (let d = 1; d <= MONTHS[mi].days; d++) {
+      if (scheduleData[cellKey(mi,pi,d,'plan')]) plan++;
+      if (scheduleData[cellKey(mi,pi,d,'actual')]) actual++;
+    }
+  });
+  return { ppl: ppl.length, plan, actual };
+}
+
+function renderMonth() {
+  const mi = currentMonth;
+  const m  = MONTHS[mi];
+  const ppl = monthPeople[mi] || [];
+  const st = countStats(mi);
+  const today = new Date();
+  const isThisMonth = today.getFullYear()===2026 && today.getMonth()===mi;
+  const todayDay = isThisMonth ? today.getDate() : -1;
+  const days = Array.from({length: m.days}, (_, i) => i+1);
+
+  let html = `
+    <div class="month-bar">
+      <div class="month-bar-left">
+        <div class="month-badge-big">${m.eng.toUpperCase()}</div>
+        <div>
+          <div class="month-bar-title">${m.name} 2026</div>
+          <div class="month-bar-sub">1–${m.days} ${m.name} · ${ppl.length} คน</div>
+        </div>
+      </div>
+      <div class="stats-chips">
+        <div class="stat-chip"><div class="chip-dot" style="background:var(--plan-text)"></div>${st.plan} Plan</div>
+        <div class="stat-chip"><div class="chip-dot" style="background:var(--actual-text)"></div>${st.actual} Actual</div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="leg-box" style="background:var(--plan-bg);border:1px solid var(--plan-border)"></div>Plan</div>
+      <div class="legend-item"><div class="leg-box" style="background:var(--actual-bg);border:1px solid var(--actual-border)"></div>Actual</div>
+      <div class="legend-item"><div class="leg-box" style="background:var(--weekend-bg);border:1px solid #fcd34d"></div>วันหยุด</div>
+      <span class="legend-sep">|</span>
+      <span style="color:var(--text3)">คลิก 1 ช่อง = กรอกวันเดียว · คลิก 2 ช่อง = กรอกช่วงวัน</span>
+    </div>
+  `;
+
+  ppl.forEach((person, pi) => {
+    html += `
+      <div class="person-card">
+        <div class="person-head">
+          <div class="person-num">${pi+1}</div>
+          <div style="flex:1">
+            <div class="person-name">${person.name}</div>
+            <div class="person-pos">${person.pos}</div>
+          </div>
+          <div class="person-tel">${person.tel||''}</div>
+        </div>
+        <div class="cal-wrap">
+          <table class="cal-table">
+            <thead>
+              <tr>
+                <th class="cal-th-label"></th>
+                ${days.map(d => `<th class="day-head-num ${isWeekend(mi,d)?'weekend':''}">${d}</th>`).join('')}
+              </tr>
+              <tr>
+                <th></th>
+                ${days.map(d => `<th class="day-head-name ${isWeekend(mi,d)?'weekend':''}">${DAY_SHORT[getDow(mi,d)]}</th>`).join('')}
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="row-spacer"><td></td></tr>
+              <tr>
+                <td class="cal-th-label" style="color:var(--plan-text)">Plan</td>
+                ${days.map(d => {
+                  const val = scheduleData[cellKey(mi,pi,d,'plan')] || '';
+                  const we  = isWeekend(mi,d);
+                  const isTd = d===todayDay;
+                  let cls = 'day-cell';
+                  if (val) cls += ' has-plan';
+                  else if (we) cls += ' weekend';
+                  if (isTd) cls += ' today';
+                  return `<td class="${cls}" data-mi="${mi}" data-pi="${pi}" data-day="${d}" data-type="plan" onclick="handleCellClick(this)">${val ? `<span class="cell-text">${val.substring(0,5)}</span>` : ''}</td>`;
+                }).join('')}
+              </tr>
+              <tr class="row-spacer"><td></td></tr>
+              <tr>
+                <td class="cal-th-label" style="color:var(--actual-text)">Actual</td>
+                ${days.map(d => {
+                  const val = scheduleData[cellKey(mi,pi,d,'actual')] || '';
+                  const we  = isWeekend(mi,d);
+                  const isTd = d===todayDay;
+                  let cls = 'day-cell';
+                  if (val) cls += ' has-actual';
+                  else if (we) cls += ' weekend';
+                  if (isTd) cls += ' today';
+                  return `<td class="${cls}" data-mi="${mi}" data-pi="${pi}" data-day="${d}" data-type="actual" onclick="handleCellClick(this)">${val ? `<span class="cell-text">${val.substring(0,5)}</span>` : ''}</td>`;
+                }).join('')}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  });
+
+  html += `<button class="add-btn" onclick="openAddPersonModal()">＋ เพิ่มพนักงาน</button>`;
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+// ============================================================
+// RANGE SELECTION
+// ============================================================
+function handleCellClick(el) {
+  const mi   = +el.dataset.mi;
+  const pi   = +el.dataset.pi;
+  const day  = +el.dataset.day;
+  const type = el.dataset.type;
+
+  if (!rangeState) {
+    // First click → start range
+    rangeState = { mi, pi, day, type };
+    document.getElementById('rangeHint').classList.add('show');
+    document.getElementById('rangeHintText').textContent =
+      `📅 เริ่มต้น: วันที่ ${day} — คลิกวันสุดท้าย (${type==='plan'?'Plan':'Actual'})`;
+    highlightRange(mi, pi, day, day, type);
+    return;
+  }
+
+  // Second click
+  if (rangeState.mi !== mi || rangeState.pi !== pi || rangeState.type !== type) {
+    // Different person/row/month → reset and treat as new start
+    rangeState = { mi, pi, day, type };
+    document.getElementById('rangeHintText').textContent =
+      `📅 เริ่มต้น: วันที่ ${day} — คลิกวันสุดท้าย`;
+    highlightRange(mi, pi, day, day, type);
+    return;
+  }
+
+  const startDay = Math.min(rangeState.day, day);
+  const endDay   = Math.max(rangeState.day, day);
+  openRangeModal(mi, pi, startDay, endDay, type);
+  rangeState = null;
+  document.getElementById('rangeHint').classList.remove('show');
+  clearHighlight();
+}
+
+function highlightRange(mi, pi, s, e, type) {
+  clearHighlight();
+  document.querySelectorAll('.day-cell').forEach(el => {
+    if (+el.dataset.mi===mi && +el.dataset.pi===pi && el.dataset.type===type) {
+      const d = +el.dataset.day;
+      if (d >= s && d <= e) {
+        el.classList.add(d===s && d===e ? 'range-start' : d===s ? 'range-start' : d===e ? 'range-end' : 'in-range');
+      }
+    }
+  });
+}
+
+function clearHighlight() {
+  document.querySelectorAll('.day-cell').forEach(el => {
+    el.classList.remove('in-range','range-start','range-end');
+  });
+}
+
+function cancelRange() {
+  rangeState = null;
+  document.getElementById('rangeHint').classList.remove('show');
+  clearHighlight();
+}
+
+// ============================================================
+// MODAL STATE
+// ============================================================
+let modalCtx = {};  // { mi, pi, startDay, endDay, type }
+
+// Open for range (or single if start===end)
+function openRangeModal(mi, pi, startDay, endDay, type) {
+  modalCtx = { mi, pi, startDay, endDay, type };
+  const m   = MONTHS[mi];
+  const person = monthPeople[mi][pi];
+  const isSingle = startDay === endDay;
+
+  document.getElementById('cModalTitle').textContent = person.name;
+  document.getElementById('cModalSub').textContent = isSingle
+    ? `วันที่ ${startDay} ${m.name} 2026 · ${DAY_SHORT[getDow(mi,startDay)]}`
+    : `วันที่ ${startDay}–${endDay} ${m.name} 2026 (${endDay-startDay+1} วัน)`;
+
+  setType(type);
+
+  // Load existing (single) or blank
+  const existingVal = isSingle ? (scheduleData[cellKey(mi,pi,startDay,type)] || '') : '';
+  document.getElementById('actInput').value = existingVal;
+  renderPresets(existingVal);
+
+  document.getElementById('cellOverlay').classList.add('open');
+}
+
+function renderPresets(curVal) {
+  document.getElementById('presetGrid').innerHTML = PRESETS.map(p =>
+    `<button class="preset-pill ${curVal===p?'selected':''}" onclick="pickPreset(this,'${p}')">${p}</button>`
+  ).join('');
+}
+
+function setType(t) {
+  modalCtx.type = t;
+  document.getElementById('tPlan').className   = `type-btn ${t==='plan'?'plan-active':''}`;
+  document.getElementById('tActual').className = `type-btn ${t==='actual'?'actual-active':''}`;
+}
+
+function pickPreset(btn, val) {
+  document.getElementById('actInput').value = val;
+  document.querySelectorAll('.preset-pill').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function clearPresets() {
+  document.querySelectorAll('.preset-pill').forEach(b => b.classList.remove('selected'));
+}
+
+function saveCells() {
+  const {mi, pi, startDay, endDay, type} = modalCtx;
+  const val = document.getElementById('actInput').value.trim();
+  for (let d = startDay; d <= endDay; d++) {
+    if (val) scheduleData[cellKey(mi,pi,d,type)] = val;
+    else delete scheduleData[cellKey(mi,pi,d,type)];
+  }
+  saveData();
+  closeCellModal();
+  renderMonth();
+  const cnt = endDay - startDay + 1;
+  showToast(val ? `บันทึก ${cnt} วัน ✓` : `ลบ ${cnt} วัน ✓`);
+}
+
+function clearCells() {
+  const {mi, pi, startDay, endDay, type} = modalCtx;
+  for (let d = startDay; d <= endDay; d++) {
+    delete scheduleData[cellKey(mi,pi,d,type)];
+  }
+  saveData();
+  closeCellModal();
+  renderMonth();
+  showToast('ลบข้อมูลแล้ว');
+}
+
+function closeCellModal() {
+  document.getElementById('cellOverlay').classList.remove('open');
+}
+
+// ============================================================
+// ADD PERSON
+// ============================================================
+function openAddPersonModal() {
+  document.getElementById('personSub').textContent = `เพิ่มพนักงานในเดือน ${MONTHS[currentMonth].name}`;
+  document.getElementById('pName').value = '';
+  document.getElementById('pPos').value  = '';
+  document.getElementById('pTel').value  = '';
+  document.querySelectorAll('#personOverlay .preset-pill').forEach(b => b.classList.remove('selected'));
+  document.getElementById('personOverlay').classList.add('open');
+}
+
+function pickPos(btn, pos) {
+  document.querySelectorAll('#personOverlay .preset-pill').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('pPos').value = pos;
+}
+
+function savePerson() {
+  const name = document.getElementById('pName').value.trim();
+  const pos  = document.getElementById('pPos').value.trim() || 'Engineer';
+  const tel  = document.getElementById('pTel').value.trim();
+  if (!name) { showToast('กรุณากรอกชื่อ'); return; }
+  monthPeople[currentMonth].push({ name, pos, tel });
+  saveData();
+  closePersonModal();
+  renderMonth();
+  showToast(`เพิ่ม ${name} แล้ว ✓`);
+}
+
+function closePersonModal() {
+  document.getElementById('personOverlay').classList.remove('open');
+}
+
+// ============================================================
+// EXPORT
+// ============================================================
+function exportTxt() {
+  const mi  = currentMonth;
+  const m   = MONTHS[mi];
+  const ppl = monthPeople[mi] || [];
+  let txt   = `SI Schedule Plan · ${m.name} 2026\n${'='.repeat(55)}\n\n`;
+  ppl.forEach((p, pi) => {
+    txt += `${pi+1}. ${p.name}  (${p.pos})  ${p.tel}\n`;
+    for (const type of ['plan','actual']) {
+      const label = type==='plan' ? 'Plan  ' : 'Actual';
+      let line = `   ${label}: `;
+      for (let d = 1; d <= m.days; d++) {
+        const v = scheduleData[cellKey(mi,pi,d,type)] || '';
+        if (v) line += `${d}/${v.substring(0,6)} `;
+      }
+      txt += line + '\n';
+    }
+    txt += '\n';
+  });
+  const blob = new Blob([txt], {type:'text/plain;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `SI_Schedule_${m.eng}_2026.txt`;
+  a.click();
+  showToast('Export แล้ว ✓');
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// Close overlays on backdrop click
+['cellOverlay','personOverlay'].forEach(id => {
+  document.getElementById(id).addEventListener('click', function(e) {
+    if (e.target === this) {
+      this.classList.remove('open');
+      cancelRange();
+    }
+  });
+});
+
+// ============================================================
+init();
+</script>
+</body>
+</html>
