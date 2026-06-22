@@ -746,8 +746,10 @@ let filterPersonIdx = -1; // -1 = แสดงทุกคน
 
 function isPast(mi, day) {
   if (TODAY.getFullYear() !== 2026) return false;
-  const tmi = TODAY.getMonth(), td = TODAY.getDate();
-  return mi < tmi || (mi === tmi && day < td);
+  const target = new Date(2026, mi, day);
+  const limit = new Date(2026, TODAY.getMonth(), TODAY.getDate());
+  limit.setDate(limit.getDate() - 3);  // ย้อนหลังได้ 3 วัน
+  return target < limit;
 }
 
 // ═══════════════════════════════════════════
