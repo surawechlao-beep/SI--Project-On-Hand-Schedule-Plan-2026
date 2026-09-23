@@ -695,7 +695,7 @@ body { font-family: 'Kanit', sans-serif; background: var(--bg); color: var(--tex
 // ═══════════════════════════════════════════
 const API_URL = 'https://script.google.com/macros/s/AKfycbwNNgJdQC6TnGgKPJ9l9XOnFXg9S5FDBLkmVItT1cyirrVy3E-lCDm_wqRkOnIKDDU/exec';
 const USE_CLOUD = true;
-const ADMIN_PIN = '1234'; // PIN สำหรับแก้ไขข้อมูล
+// PIN ตรวจที่ server เท่านั้น (Script Properties) — ไม่มีอยู่ในไฟล์นี้
 
 // ═══════════════════════════════════════════
 // CONSTANTS
@@ -719,15 +719,15 @@ MONTHS.forEach(mo => { mo.dow1 = new Date(2026, mo.m, 1).getDay(); });
 const DAY_S = ['Su','Mo','Tu','We','Th','Fr','Sa'];
 const PRESETS = ['FAT','ART','G2N','Mob','Demob','TTM','EGAT-BPK','PTTOC-R5','Office','Travel','Standby','Leave'];
 
-// รายชื่อ BASE — 6 คน
+// รายชื่อ BASE (สำรอง ถ้า Sheet ว่าง) — ไม่เก็บเบอร์โทรในโค้ด เบอร์อยู่ใน Sheet เท่านั้น
 const BASE_PEOPLE = [
-  {name:'Pocin Oboon',        pos:'Supervisor',               tel:'084-468-8373'},
-  {name:'Surin Phatum',       pos:'Technical',                tel:'062-238-2994'},
-  {name:'Ukrit Buaprom',      pos:'Technical',                tel:'082-296-5698'},
-  {name:'Ratchapu Teppawong', pos:'Engineer',                 tel:'063-598-5461'},
-  {name:'Weerapap Nuambrut',  pos:'Technical',                tel:'081-874-6252'},
-  {name:'Yuthasak S.',        pos:'Senior Product Specialist',tel:'082-999-8881'},
-  {name:'Phuwanat Pornnipaumpai', pos:'Service Manager',      tel:'087-607-9828'},
+  {name:'Pocin Oboon',        pos:'Supervisor'},
+  {name:'Surin Phatum',       pos:'Technical'},
+  {name:'Ukrit Buaprom',      pos:'Technical'},
+  {name:'Ratchapu Teppawong', pos:'Engineer'},
+  {name:'Weerapap Nuambrut',  pos:'Technical'},
+  {name:'Yuthasak S.',        pos:'Senior Product Specialist'},
+  {name:'Phuwanat Pornnipaumpai', pos:'Service Manager'},
 ];
 
 // ═══════════════════════════════════════════
@@ -740,6 +740,7 @@ let sched  = {}; // key: "mi__nameKey__day__type" → value
 let rng    = null; // range state
 let mCtx   = {}; // modal context
 let isUnlocked = false; // PIN — reset ตอนปิดแอพ
+let editToken = null;   // ได้หลังใส่ PIN ถูก (เก็บในหน่วยความจำเท่านั้น)
 let lastSyncTime = null; // timestamp sync ล่าสุด
 let editPersonIdx = -1; // index คนที่กำลังแก้ไข
 let filterPersonIdx = -1; // -1 = แสดงทุกคน
@@ -779,6 +780,28 @@ function loadLocal() {
 }
 
 // ═══════════════════════════════════════════
+// SECURITY HELPERS
+// ═══════════════════════════════════════════
+// escape ข้อความก่อนใส่ใน innerHTML — กันโค้ดแปลกปลอมจากข้อมูลใน Sheet
+function esc(v) {
+  return String(v == null ? '' : v)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ทุกคำขอเป็น POST (text/plain = ไม่มี CORS preflight) — รหัสไม่อยู่ใน URL
+async function api(payload) {
+  const res = await fetch(API_URL, {
+    method: 'POST', headers: {'Content-Type':'text/plain;charset=utf-8'},
+    body: JSON.stringify(payload)
+  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
+}
+
+function lockEdit() { isUnlocked = false; editToken = null; }
+
+// ═══════════════════════════════════════════
 // CLOUD SYNC
 // ═══════════════════════════════════════════
 function setSt(msg, color) {
@@ -795,8 +818,7 @@ async function loadData() {
   if (!USE_CLOUD) { loadLocal(); return; }
   setSt('⏳ กำลังโหลด...', 'var(--text3)');
   try {
-    const res  = await fetch(API_URL + '?action=schedule_get&v=' + Date.now());
-    const json = await res.json();
+    const json = await api({action:'schedule_get'});
     if (!json.ok) throw new Error('api error');
 
     // Load people — ใช้จาก Sheet เป็นหลัก ถ้าขาดเติมจาก BASE
@@ -832,6 +854,7 @@ async function loadData() {
     saveLocal(); // backup ทันทีหลังโหลดสำเร็จ
     setSt('✅ อัปเดตแล้ว', 'var(--green)');
     setTimeout(() => setSt(''), 3000);
+    return true;
   } catch(e) {
     // network ล้มเหลว — ใช้ local แต่แจ้งให้รู้
     const ok = loadLocal();
@@ -844,11 +867,13 @@ async function syncChanges(changes) {
   if (!USE_CLOUD) return;
   setSt('💾 กำลังบันทึก...', 'var(--text3)');
   try {
-    const res  = await fetch(API_URL, {
-      method: 'POST', headers: {'Content-Type':'text/plain'},
-      body: JSON.stringify({action:'schedule_update', changes})
-    });
-    const json = await res.json();
+    const json = await api({action:'schedule_update', editToken, changes});
+    if (!json.ok && json.error === 'locked') {
+      lockEdit();
+      setSt('🔒 สิทธิ์แก้ไขหมดอายุ — ใส่ PIN ใหม่แล้วบันทึกอีกครั้ง', '#dc2626');
+      showToast('🔒 ใส่ PIN ใหม่ แล้วกด ☁️ Sync');
+      return;
+    }
     if (!json.ok) throw new Error('update failed');
     setSt('✅ บันทึกแล้ว', 'var(--green)');
     setTimeout(() => setSt(''), 3000);
@@ -862,6 +887,7 @@ async function syncChanges(changes) {
 // Sync ทั้งหมดขึ้น Sheet — ปลอดภัย: โหลดจาก Sheet ก่อน merge แล้ว upload
 async function fullSync() {
   if (!USE_CLOUD) { showToast('ไม่ได้เชื่อมต่อ Cloud'); return; }
+  if (!editToken) { showToast('🔒 ต้องใส่ PIN ก่อน Sync'); return; }
   setSt('☁️ กำลัง Sync...', 'var(--text3)');
 
   // สร้าง rows จาก sched ใน local
@@ -872,11 +898,8 @@ async function fullSync() {
   const pRows = people.map((p, pi) => ({pi, name:p.name, pos:p.pos, tel:p.tel||''}));
 
   try {
-    const res  = await fetch(API_URL, {
-      method: 'POST', headers: {'Content-Type':'text/plain'},
-      body: JSON.stringify({action:'schedule_save', scheduleData:sdRows, people:pRows})
-    });
-    const json = await res.json();
+    const json = await api({action:'schedule_save', editToken, scheduleData:sdRows, people:pRows});
+    if (!json.ok && json.error === 'locked') { lockEdit(); throw new Error('locked'); }
     if (!json.ok) throw new Error('sync failed');
     saveLocal(); // backup หลัง sync สำเร็จ
     setSt('✅ Sync สำเร็จ', 'var(--green)');
@@ -889,6 +912,7 @@ async function fullSync() {
 }
 
 function confirmFullSync() {
+  if (!editToken) { requestPin(confirmFullSync); return; }
   if (!confirm('Sync ข้อมูลทั้งหมดขึ้น Google Sheet?\nจะลบข้อมูลเก่าใน Sheet แล้ว upload ใหม่')) return;
   showLoading('กำลัง Sync ทั้งหมด...');
   fullSync().then(() => hideLoading());
@@ -939,10 +963,10 @@ function renderHome() {
     <div class="team-row">
       <div class="team-num">${i+1}</div>
       <div style="flex:1;min-width:0">
-        <div class="team-name">${p.name}</div>
-        <div class="team-pos">${p.pos}</div>
+        <div class="team-name">${esc(p.name)}</div>
+        <div class="team-pos">${esc(p.pos)}</div>
       </div>
-      <div class="team-tel">${p.tel||''}</div>
+      <div class="team-tel">${esc(p.tel||'')}</div>
     </div>`).join('');
 }
 
@@ -954,8 +978,8 @@ function renderTeamPage() {
     <div class="team-row">
       <div class="team-num">${i+1}</div>
       <div style="flex:1;min-width:0">
-        <div class="team-name">${p.name}</div>
-        <div class="team-pos">${p.pos} · ${p.tel||''}</div>
+        <div class="team-name">${esc(p.name)}</div>
+        <div class="team-pos">${esc(p.pos)} · ${esc(p.tel||'')}</div>
       </div>
       <div style="display:flex;gap:5px;flex-shrink:0">
         <button onclick="requestPin(()=>openEditPerson(${i}))" style="border:1px solid var(--border);background:var(--bg);color:var(--text2);border-radius:6px;padding:5px 10px;font-family:'Kanit',sans-serif;font-size:11px;cursor:pointer">✏️</button>
@@ -1023,9 +1047,9 @@ async function init() {
   setTimeout(() => { splash.style.display = 'none'; }, 400);
 }
 
-window.addEventListener('pagehide', () => { isUnlocked = false; });
+window.addEventListener('pagehide', lockEdit);
 window.addEventListener('blur', () => {
-  setTimeout(() => { isUnlocked = false; }, 30000);
+  setTimeout(lockEdit, 30000);
 });
 
 async function refreshData() {
@@ -1103,7 +1127,7 @@ function renderContent() {
   // filter person
   if (filterPersonIdx >= 0 && filterPersonIdx < people.length) {
     h += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-      <div style="font-size:12px;color:var(--text2)">👤 <b>${people[filterPersonIdx].name}</b></div>
+      <div style="font-size:12px;color:var(--text2)">👤 <b>${esc(people[filterPersonIdx].name)}</b></div>
       <button onclick="filterPersonIdx=-1;renderContent()" style="font-size:11px;padding:4px 10px;border:1px solid var(--border);border-radius:7px;background:var(--bg);color:var(--text2);font-family:'Kanit',sans-serif;cursor:pointer">ดูทุกคน</button>
     </div>`;
   }
@@ -1114,11 +1138,11 @@ function renderContent() {
         <div class="phead">
           <div class="pnum">${pi+1}</div>
           <div style="flex:1;min-width:0;cursor:pointer" onclick="goPersonSchedule(${pi})">
-            <div class="pname">${person.name}</div>
-            <div class="ppos">${person.pos}</div>
+            <div class="pname">${esc(person.name)}</div>
+            <div class="ppos">${esc(person.pos)}</div>
           </div>
-          <div class="ptel">${person.tel||''}</div>
-          <button class="pdel" onclick="delPerson(${pi})">✕</button>
+          <div class="ptel">${esc(person.tel||'')}</div>
+          <button class="pdel" onclick="requestPin(()=>delPerson(${pi}))">✕</button>
         </div>
         <div class="cal-wrap">
           <table class="cal-table">
@@ -1142,7 +1166,7 @@ function renderContent() {
                   let cls = 'dc' + (val ? (jobCls ? ` ${jobCls}` : ' plan') : (isWE(mi,d)?' we':'')) + (d===todayDay?' today':'');
                   cls += rngCls(mi,pi,d,'plan');
                   if (isPast(mi, d)) cls += ' past';
-                  return `<td class="${cls}" data-mi="${mi}" data-pi="${pi}" data-d="${d}" data-t="plan" onclick="handleCell(this)">${val?`<span style="font-size:7px;font-weight:600">${val.substring(0,5)}</span>`:''}</td>`;
+                  return `<td class="${cls}" data-mi="${mi}" data-pi="${pi}" data-d="${d}" data-t="plan" onclick="handleCell(this)">${val?`<span style="font-size:7px;font-weight:600">${esc(val.substring(0,5))}</span>`:''}</td>`;
                 }).join('')}
               </tr>
               <tr class="row-sp"><td></td></tr>
@@ -1154,7 +1178,7 @@ function renderContent() {
                   let cls = 'dc' + (val ? (jobCls ? ` ${jobCls}` : ' actual') : (isWE(mi,d)?' we':'')) + (d===todayDay?' today':'');
                   cls += rngCls(mi,pi,d,'actual');
                   if (isPast(mi, d)) cls += ' past';
-                  return `<td class="${cls}" data-mi="${mi}" data-pi="${pi}" data-d="${d}" data-t="actual" onclick="handleCell(this)">${val?`<span style="font-size:7px;font-weight:600">${val.substring(0,5)}</span>`:''}</td>`;
+                  return `<td class="${cls}" data-mi="${mi}" data-pi="${pi}" data-d="${d}" data-t="actual" onclick="handleCell(this)">${val?`<span style="font-size:7px;font-weight:600">${esc(val.substring(0,5))}</span>`:''}</td>`;
                 }).join('')}
               </tr>
             </tbody>
@@ -1252,6 +1276,7 @@ function pickPill(btn, v) {
 function clearPills() { document.querySelectorAll('#pillGrid .pill').forEach(b => b.classList.remove('on')); }
 
 async function saveCells() {
+  if (!editToken) { requestPin(saveCells); return; } // สิทธิ์แก้ไขหมดอายุ → ขอ PIN ใหม่
   const {mi, pi, s, e, type} = mCtx;
   const val = document.getElementById('actInp').value.trim();
   const person = people[pi];
@@ -1278,6 +1303,7 @@ async function saveCells() {
 }
 
 async function deleteCells() {
+  if (!editToken) { requestPin(deleteCells); return; } // สิทธิ์แก้ไขหมดอายุ → ขอ PIN ใหม่
   const {mi, pi, s, e, type} = mCtx;
   const person = people[pi];
   if (!person) return;
@@ -1318,26 +1344,33 @@ function pinPress(num) {
   pinBuffer += num;
   updatePinDots();
   if (pinBuffer.length === 4) {
-    setTimeout(() => {
-      if (pinBuffer === ADMIN_PIN) {
+    const entered = pinBuffer;
+    document.getElementById('pinError').textContent = 'กำลังตรวจสอบ...';
+    api({action:'unlock', pin: entered}).then(r => {
+      if (r.ok && r.editToken) {
+        editToken = r.editToken;
         isUnlocked = true;
         document.getElementById('pinOv').classList.remove('show');
+        document.getElementById('pinError').textContent = '';
         pinBuffer = '';
         updatePinDots();
-        if (pinCallback) { pinCallback(); pinCallback = null; }
+        if (pinCallback) { const cb = pinCallback; pinCallback = null; cb(); }
       } else {
-        // PIN ผิด
-        [0,1,2,3].forEach(i => {
-          const d = document.getElementById(`pd${i}`);
-          d.classList.add('error');
-          setTimeout(() => d.classList.remove('error','filled'), 500);
-        });
-        document.getElementById('pinError').textContent = 'PIN ไม่ถูกต้อง ลองใหม่อีกครั้ง';
-        pinBuffer = '';
-        setTimeout(() => updatePinDots(), 500);
+        pinFail(r.error || 'PIN ไม่ถูกต้อง ลองใหม่อีกครั้ง');
       }
-    }, 150);
+    }).catch(() => pinFail('เชื่อมต่อไม่ได้ — ตรวจสอบอินเทอร์เน็ต'));
   }
+}
+
+function pinFail(msg) {
+  [0,1,2,3].forEach(i => {
+    const d = document.getElementById(`pd${i}`);
+    d.classList.add('error');
+    setTimeout(() => d.classList.remove('error','filled'), 500);
+  });
+  document.getElementById('pinError').textContent = msg;
+  pinBuffer = '';
+  setTimeout(() => updatePinDots(), 500);
 }
 
 function pinDel() {
@@ -1417,6 +1450,7 @@ function pickPos(btn, pos) {
   document.getElementById('pPos').value = pos;
 }
 async function savePerson() {
+  if (!editToken) { requestPin(savePerson); return; } // สิทธิ์แก้ไขหมดอายุ → ขอ PIN ใหม่
   const name = document.getElementById('pName').value.trim();
   const pos  = document.getElementById('pPos').value.trim() || 'Engineer';
   const tel  = document.getElementById('pTel').value.trim();
@@ -1492,11 +1526,14 @@ async function saveData() {
     return {mi:+p[0], nk:p[1], day:+p[2], type:p[3], value};
   });
   try {
-    await fetch(API_URL, {
-      method: 'POST', headers: {'Content-Type':'text/plain'},
-      body: JSON.stringify({action:'schedule_save', scheduleData:sdRows, people:pRows})
-    });
-  } catch(e) {}
+    const json = await api({action:'schedule_save', editToken, scheduleData:sdRows, people:pRows});
+    if (!json.ok) {
+      if (json.error === 'locked') lockEdit();
+      showToast('⚠️ ยังไม่ขึ้น Sheet — ใส่ PIN แล้วกด ☁️ Sync');
+    }
+  } catch(e) {
+    showToast('⚠️ ยังไม่ขึ้น Sheet — กด ☁️ เมื่อมี internet');
+  }
 }
 
 // ═══════════════════════════════════════════
@@ -1558,22 +1595,22 @@ function searchAvail() {
   h += `<div class="avail-sec">✅ ว่างตลอดช่วง (${free.length} คน)</div>`;
   if (!free.length) h += `<div style="font-size:12px;color:var(--text3);padding:4px 0 8px">ไม่มีใครว่างตลอดช่วงนี้</div>`;
   else free.forEach(({person}) => {
-    h += `<div class="arow free"><div class="adot" style="background:var(--green)"></div><div style="flex:1"><div class="aname">${person.name}</div><div class="apos">${person.pos} · ${person.tel||''}</div></div><div class="astatus free">ว่าง ${total} วัน</div></div>`;
+    h += `<div class="arow free"><div class="adot" style="background:var(--green)"></div><div style="flex:1"><div class="aname">${esc(person.name)}</div><div class="apos">${esc(person.pos)} · ${esc(person.tel||'')}</div></div><div class="astatus free">ว่าง ${total} วัน</div></div>`;
   });
 
   if (partial.length) {
     h += `<div class="avail-sec">🟡 ว่างบางวัน (${partial.length} คน)</div>`;
     partial.forEach(({person, tasks, freeCount}) => {
-      const pills = Object.entries(tasks).map(([t,c]) => `<span class="atask">${t}${c>1?` ×${c}`:''}</span>`).join('');
-      h += `<div class="arow partial"><div class="adot" style="background:#b45309"></div><div style="flex:1"><div class="aname">${person.name}</div><div class="apos">${person.pos}</div><div class="atasks">${pills}</div></div><div class="astatus partial">ว่าง ${freeCount} วัน</div></div>`;
+      const pills = Object.entries(tasks).map(([t,c]) => `<span class="atask">${esc(t)}${c>1?` ×${c}`:''}</span>`).join('');
+      h += `<div class="arow partial"><div class="adot" style="background:#b45309"></div><div style="flex:1"><div class="aname">${esc(person.name)}</div><div class="apos">${esc(person.pos)}</div><div class="atasks">${pills}</div></div><div class="astatus partial">ว่าง ${freeCount} วัน</div></div>`;
     });
   }
 
   h += `<div class="avail-sec">🔴 ไม่ว่างตลอดช่วง (${busy.length} คน)</div>`;
   if (!busy.length) h += `<div style="font-size:12px;color:var(--text3);padding:4px 0 8px">ทุกคนว่างในช่วงนี้</div>`;
   else busy.forEach(({person, tasks}) => {
-    const pills = Object.entries(tasks).map(([t,c]) => `<span class="atask">${t}${c>1?` ×${c}`:''}</span>`).join('');
-    h += `<div class="arow busy"><div class="adot" style="background:var(--blue)"></div><div style="flex:1"><div class="aname">${person.name}</div><div class="apos">${person.pos}</div><div class="atasks">${pills}</div></div><div class="astatus busy">ไม่ว่าง</div></div>`;
+    const pills = Object.entries(tasks).map(([t,c]) => `<span class="atask">${esc(t)}${c>1?` ×${c}`:''}</span>`).join('');
+    h += `<div class="arow busy"><div class="adot" style="background:var(--blue)"></div><div style="flex:1"><div class="aname">${esc(person.name)}</div><div class="apos">${esc(person.pos)}</div><div class="atasks">${pills}</div></div><div class="astatus busy">ไม่ว่าง</div></div>`;
   });
 
   document.getElementById('availResult').innerHTML = h;
@@ -1586,7 +1623,7 @@ function exportTxt() {
   const mi = curMi, mo = MONTHS[mi];
   let txt = `SI Schedule · ${mo.name} 2026\n${'─'.repeat(50)}\n\n`;
   people.forEach((p, pi) => {
-    txt += `${pi+1}. ${p.name} (${p.pos}) ${p.tel}\n`;
+    txt += `${pi+1}. ${p.name} (${p.pos}) ${p.tel||''}\n`;
     ['plan','actual'].forEach(t => {
       let line = `   ${t==='plan'?'Plan  ':'Actual'}: `;
       for (let d=1; d<=mo.days; d++) { const v=sched[ck(mi,pi,d,t)]; if(v) line+=`${d}/${v} `; }
